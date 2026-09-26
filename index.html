@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GO EXPRESS</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      padding: 25px 15px;
+    }
+
+    .logo {
+      background: #ff7a00;
+      width: 70px;
+      height: 70px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    h1 {
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      color: #aaa;
+      margin-bottom: 25px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    button {
+      border: none;
+      border-radius: 18px;
+      padding: 20px 10px;
+      background: #222;
+      color: white;
+      font-size: 16px;
+    }
+
+    .icon {
+      font-size: 30px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .panel {
+      display: none;
+      margin-top: 20px;
+      background: #222;
+      padding: 20px;
+      border-radius: 18px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      box-sizing: border-box;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: 1px solid #444;
+      background: #111;
+      color: white;
+      font-size: 16px;
+    }
+
+    .orange {
+      background: #ff7a00;
+      width: 100%;
+    }
+
+    .back {
+      background: none;
+      color: #ff7a00;
+      padding: 0;
+      margin-bottom: 15px;
+    }
+
+    .result {
+      margin-top: 15px;
+      padding: 15px;
+      background: #111;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="logo">
+    GO<br>EXPRESS
+  </div>
+
+  <h1>GO EXPRESS</h1>
+  <div class="subtitle">Китай → Кыргызстан</div>
+
+  <div id="menu" class="grid">
+
+    <button onclick="openPanel('tracking')">
+      <span class="icon">📦</span>
+      Мои грузы
+    </button>
+
+    <button onclick="openPanel('calculator')">
+      <span class="icon">🧮</span>
+      Калькулятор
+    </button>
+
+    <button onclick="openPanel('warehouse')">
+      <span class="icon">📍</span>
+      Склад в Китае
+    </button>
+
+    <button onclick="openPanel('support')">
+      <span class="icon">💬</span>
+      Поддержка
+    </button>
+
+  </div>
+
+
+  <div id="tracking" class="panel">
+
+    <button class="back" onclick="home()">← Назад</button>
+
+    <h2>📦 Отследить груз</h2>
+
+    <input id="track" placeholder="Введите трек-номер">
+
+    <button class="orange" onclick="tracking()">
+      Найти груз
+    </button>
+
+    <div id="trackResult"></div>
+
+  </div>
+
+
+  <div id="calculator" class="panel">
+
+    <button class="back" onclick="home()">← Назад</button>
+
+    <h2>🧮 Калькулятор</h2>
+
+    <input id="weight" type="number" placeholder="Вес, кг">
+
+    <input id="price" type="number" value="225" placeholder="Цена за кг">
+
+    <button class="orange" onclick="calculate()">
+      Рассчитать
+    </button>
+
+    <div id="calcResult"></div>
+
+  </div>
+
+
+  <div id="warehouse" class="panel">
+
+    <button class="back" onclick="home()">← Назад</button>
+
+    <h2>📍 Склад в Китае</h2>
+
+    <div class="result">
+      <b>GO EXPRESS</b>
+      <br><br>
+      Адрес склада добавим сюда позже.
+    </div>
+
+  </div>
+
+
+  <div id="support" class="panel">
+
+    <button class="back" onclick="home()">← Назад</button>
+
+    <h2>💬 Поддержка</h2>
+
+    <div class="result">
+      Свяжитесь с оператором GO EXPRESS через Telegram.
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const tg = window.Telegram.WebApp;
+
+tg.ready();
+tg.expand();
+
+
+function openPanel(id) {
+
+  document.getElementById("menu").style.display = "none";
+
+  document.querySelectorAll(".panel").forEach(function(panel) {
+    panel.style.display = "none";
+  });
+
+  document.getElementById(id).style.display = "block";
+}
+
+
+function home() {
+
+  document.querySelectorAll(".panel").forEach(function(panel) {
+    panel.style.display = "none";
+  });
+
+  document.getElementById("menu").style.display = "grid";
+}
+
+
+function calculate() {
+
+  let weight = Number(document.getElementById("weight").value);
+  let price = Number(document.getElementById("price").value);
+
+  if (!weight) {
+    alert("Введите вес");
+    return;
+  }
+
+  let total = weight * price;
+
+  document.getElementById("calcResult").innerHTML =
+    '<div class="result">' +
+    'Стоимость доставки:<br><br>' +
+    '<b style="font-size:25px;">' +
+    total.toLocaleString("ru-RU") +
+    ' сом</b>' +
+    '</div>';
+}
+
+
+function tracking() {
+
+  let track = document.getElementById("track").value;
+
+  if (!track) {
+    alert("Введите трек-номер");
+    return;
+  }
+
+  document.getElementById("trackResult").innerHTML =
+    '<div class="result">' +
+    'Трек: <b>' + track + '</b><br><br>' +
+    'Статус: 🚚 В обработке' +
+    '</div>';
+}
+
+</script>
+
+</body>
+</html>
